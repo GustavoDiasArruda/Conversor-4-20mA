@@ -2,7 +2,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Conversor 4-20mA Pro", page_icon="⚡")
 
-st.title("⚡ TETEU")
+st.title("⚡ CONVERSOR 4-20mA")
 
 # --- PAINEL DE CONFIGURAÇÃO ---
 st.sidebar.header("Configurações da Escala")
