@@ -9,10 +9,12 @@ st.title("⚙️ Conversor de Instrumentação")
 # --- CONFIGURAÇÕES ---
 st.sidebar.header("Configurações")
 unidade = st.sidebar.text_input("Unidade:", value="°C")
+
+# Usamos f-strings nos labels para incluir a unidade dinamicamente
 min_b = st.sidebar.number_input("Valor PLC (4mA):", value=1638)
 max_b = st.sidebar.number_input("Valor PLC (20mA):", value=8191)
-min_e = st.sidebar.number_input("Engenharia Mínima:", value=0.0)
-max_e = st.sidebar.number_input("Engenharia Máxima:", value=100.0)
+min_e = st.sidebar.number_input(f"Engenharia Mínima ({unidade}):", value=0.0)
+max_e = st.sidebar.number_input(f"Engenharia Máxima ({unidade}):", value=100.0)
 
 faixa_b = max_b - min_b
 faixa_e = max_e - min_e
