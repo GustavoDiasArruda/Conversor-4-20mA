@@ -40,17 +40,18 @@ st.markdown("<h4 style='color: gray;'>Desenvolvido por: Gustavo Arruda</h4>", un
 faixa_b = max_b - min_b
 faixa_e = max_e - min_e
 
-tab1, tab2 = st.tabs(["Converter Valor PLC", "Converter Corrente (mA)"])
-
-# Função auxiliar para exibir resultados com fonte grande
+# Função para exibir resultados
 def exibir_resultado(val, label):
     st.markdown(f"<p style='font-size:24px;'>{label}: <b style='color:#00ccff;'>{val}</b></p>", unsafe_allow_html=True)
+
+tab1, tab2 = st.tabs(["Converter Valor PLC", "Converter Corrente (mA)"])
 
 with tab1:
     val_b = st.number_input("Digite o Valor do PLC:", value=5500)
     if st.button("Calcular (PLC)"):
         ma = 4 + ((val_b - min_b) / faixa_b) * 16
         eng = min_e + ((ma - 4) / 16) * faixa_e
+        st.session_state['ponto_calculado'] = {'ma': ma, 'eng': eng, 'plc': val_b}
         exibir_resultado(f"{eng:.2f} {unidade}", "Resultado")
         exibir_resultado(f"{ma:.2f} mA", "Corrente")
 
@@ -59,6 +60,7 @@ with tab2:
     if st.button("Calcular (mA)"):
         eng = min_e + ((val_ma - 4) / 16) * faixa_e
         plc = min_b + ((val_ma - 4) / 16) * faixa_b
+        st.session_state['ponto_calculado'] = {'ma': val_ma, 'eng': eng, 'plc': plc}
         exibir_resultado(f"{eng:.2f} {unidade}", "Resultado")
         exibir_resultado(f"{int(plc)}", "Valor PLC")
 
@@ -72,9 +74,25 @@ df = pd.DataFrame({
 })
 st.table(df)
 
+# Gráfico Dinâmico
 st.subheader("Gráfico de Linearidade")
-fig = px.line(df, x="Corrente (mA)", y=f"Engenharia ({unidade})", 
+df_plot = df.copy()
+if 'ponto_calculado' in st.session_state:
+    ponto = st.session_state['ponto_calculado']
+    df_plot = pd.concat([df_plot, pd.DataFrame({
+        "Corrente (mA)": [ponto['ma']],
+        f"Engenharia ({unidade})": [ponto['eng']],
+        "Valor PLC": [ponto['plc']]
+    })], ignore_index=True)
+
+fig = px.line(df_plot, x="Corrente (mA)", y=f"Engenharia ({unidade})", 
               markers=True, template="plotly_dark", title="Curva de Calibração")
+
+if 'ponto_calculado' in st.session_state:
+    fig.add_scatter(x=[st.session_state['ponto_calculado']['ma']], 
+                    y=[st.session_state['ponto_calculado']['eng']], 
+                    mode='markers', marker=dict(color='red', size=14), name="Seu Cálculo")
+
 fig.update_traces(line_color='#00ccff', line_width=3)
 st.plotly_chart(fig, use_container_width=True)
 
