@@ -39,6 +39,7 @@ with aba2:
 # --- TABELA DE REFERÊNCIA ---
 st.markdown("---")
 st.subheader("Tabela de Referência")
+
 referencias = {
     "4 mA": min_eng,
     "8 mA": min_eng + (faixa_eng * 0.25),
