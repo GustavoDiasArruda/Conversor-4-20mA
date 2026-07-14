@@ -1,8 +1,6 @@
 import streamlit as st
-import pandas as pd  # <--- ADICIONE ESTA LINHA AQUI!
+import pandas as pd
 
-st.set_page_config(page_title="Conversor de Instrumentação", page_icon="⚙️")
-# ... restante do seu código ...
 st.set_page_config(page_title="Conversor de Instrumentação", page_icon="⚙️")
 
 st.title("⚙️ Conversor de Instrumentação")
@@ -27,7 +25,6 @@ with aba1:
     st.header("Conversão: Valor Bruto")
     val_bruto = st.number_input("Digite o Valor Bruto:", value=5500)
     if st.button("Calcular Valor em Engenharia"):
-        # Primeiro acha a corrente, depois converte para engenharia
         ma = 4 + ((val_bruto - min_val_bruto) / faixa_bruta) * 16
         valor_eng = min_eng + ((ma - 4) / 16) * faixa_eng
         st.metric(label=f"Valor em {unidade}", value=f"{valor_eng:.2f} {unidade}")
@@ -50,6 +47,5 @@ referencias = {
     "20 mA": max_eng
 }
 
-import pandas as pd
 df = pd.DataFrame(list(referencias.items()), columns=["Corrente", f"Valor em {unidade}"])
 st.table(df)
