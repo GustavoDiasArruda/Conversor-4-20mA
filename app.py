@@ -4,7 +4,7 @@ import plotly.express as px
 
 st.set_page_config(page_title="Conversor Profissional", page_icon="⚙️")
 
-# --- BARRA LATERAL (IDENTIFICAÇÃO) ---
+# --- BARRA LATERAL (CONFIGURAÇÕES) ---
 st.sidebar.title("Configurações")
 st.sidebar.markdown("---")
 
@@ -31,13 +31,13 @@ min_e = st.sidebar.number_input(f"Engenharia Mínima ({unidade}):", value=0.0)
 max_e = st.sidebar.number_input(f"Engenharia Máxima ({unidade}):", value=100.0)
 
 st.sidebar.markdown("---")
-st.sidebar.caption("Sistema Operacional")
 st.sidebar.info("Desenvolvedor: **Gustavo Arruda**")
 
 # --- CORPO PRINCIPAL ---
 st.title("⚙️ Conversor de Instrumentação")
+# Assinatura no Topo
+st.caption("Desenvolvido por: Gustavo Arruda")
 
-# [Lógica de Cálculo permanece igual...]
 faixa_b = max_b - min_b
 faixa_e = max_e - min_e
 
@@ -67,21 +67,4 @@ st.subheader("Tabela de Referência")
 df = pd.DataFrame({
     "Corrente (mA)": [4, 8, 12, 16, 20],
     f"Engenharia ({unidade})": [min_e, min_e+(faixa_e*0.25), min_e+(faixa_e*0.50), min_e+(faixa_e*0.75), max_e],
-    "Valor PLC": [min_b, min_b+(faixa_b*0.25), min_b+(faixa_b*0.50), min_b+(faixa_b*0.75), max_b]
-})
-st.table(df)
-
-st.subheader("Gráfico de Linearidade")
-fig = px.line(df, x="Corrente (mA)", y=f"Engenharia ({unidade})", 
-              markers=True, template="plotly_dark", title="Curva de Calibração")
-fig.update_traces(line_color='#00ccff', line_width=3)
-st.plotly_chart(fig, use_container_width=True)
-
-# --- RODAPÉ COM ASSINATURA ---
-st.markdown("---")
-st.markdown(
-    f"<div style='text-align: center; color: gray;'>"
-    f"🚀 Ferramenta de Campo | Desenvolvido por <b>Gustavo Arruda</b>"
-    f"</div>", 
-    unsafe_allow_html=True
-)
+    "Valor PLC": [min_b, min_b+(faixa_b*0.25), min_
