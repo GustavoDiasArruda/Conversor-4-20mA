@@ -67,4 +67,21 @@ st.subheader("Tabela de Referência")
 df = pd.DataFrame({
     "Corrente (mA)": [4, 8, 12, 16, 20],
     f"Engenharia ({unidade})": [min_e, min_e+(faixa_e*0.25), min_e+(faixa_e*0.50), min_e+(faixa_e*0.75), max_e],
-    "Valor PLC": [min_b, min_b+(faixa_b*0.25), min_
+    "Valor PLC": [min_b, min_b+(faixa_b*0.25), min_b+(faixa_b*0.50), min_b+(faixa_b*0.75), max_b]
+})
+st.table(df)
+
+st.subheader("Gráfico de Linearidade")
+fig = px.line(df, x="Corrente (mA)", y=f"Engenharia ({unidade})", 
+              markers=True, template="plotly_dark", title="Curva de Calibração")
+fig.update_traces(line_color='#00ccff', line_width=3)
+st.plotly_chart(fig, use_container_width=True)
+
+# --- RODAPÉ ---
+st.markdown("---")
+st.markdown(
+    f"<div style='text-align: center; color: gray;'>"
+    f"🚀 Ferramenta de Campo | <b>Gustavo Arruda</b>"
+    f"</div>", 
+    unsafe_allow_html=True
+)
