@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="Conversor de Instrumentação", page_icon="⚙️")
+st.set_page_config(page_title="Conversor de Instrumentaçãooo", page_icon="⚙️")
 
 st.title("⚙️ Conversor de Instrumentação")
 
