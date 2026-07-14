@@ -98,4 +98,4 @@ st.plotly_chart(fig, use_container_width=True)
 
 # --- RODAPÉ ---
 st.markdown("---")
-st.markdown("<div style='text-align: center; color: gray; font-size:18px;'>🚀 Ferramenta de Campo | <b>Gustavo Arruda</b></div>", unsafe_allow_html=True)
+st.markdown("<div style='text-align: center; color: gray; font-size:18px;'> Ferramenta de Campo | <b>Gustavo Arruda</b></div>", unsafe_allow_html=True)
