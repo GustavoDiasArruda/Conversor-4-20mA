@@ -4,7 +4,7 @@ import plotly.express as px
 
 st.set_page_config(page_title="Conversor Profissional", page_icon="⚙️")
 
-# --- BARRA LATERAL (CONFIGURAÇÕES) ---
+# --- BARRA LATERAL ---
 st.sidebar.title("Configurações")
 st.sidebar.markdown("---")
 
@@ -35,31 +35,32 @@ st.sidebar.info("Desenvolvedor: **Gustavo Arruda**")
 
 # --- CORPO PRINCIPAL ---
 st.title("⚙️ Conversor de Instrumentação")
-# Assinatura no Topo
-st.caption("Desenvolvido por: Gustavo Arruda")
+st.markdown("<h4 style='color: gray;'>Desenvolvido por: Gustavo Arruda</h4>", unsafe_allow_html=True)
 
 faixa_b = max_b - min_b
 faixa_e = max_e - min_e
 
 tab1, tab2 = st.tabs(["Converter Valor PLC", "Converter Corrente (mA)"])
 
+# Função auxiliar para exibir resultados com fonte grande
+def exibir_resultado(val, label):
+    st.markdown(f"<p style='font-size:24px;'>{label}: <b style='color:#00ccff;'>{val}</b></p>", unsafe_allow_html=True)
+
 with tab1:
     val_b = st.number_input("Digite o Valor do PLC:", value=5500)
     if st.button("Calcular (PLC)"):
         ma = 4 + ((val_b - min_b) / faixa_b) * 16
         eng = min_e + ((ma - 4) / 16) * faixa_e
-        col1, col2 = st.columns(2)
-        col1.metric(f"Resultado ({unidade})", f"{eng:.2f}")
-        col2.metric("Corrente (mA)", f"{ma:.2f}")
+        exibir_resultado(f"{eng:.2f} {unidade}", "Resultado")
+        exibir_resultado(f"{ma:.2f} mA", "Corrente")
 
 with tab2:
     val_ma = st.number_input("Digite os mA:", min_value=4.0, max_value=20.0, value=12.0)
     if st.button("Calcular (mA)"):
         eng = min_e + ((val_ma - 4) / 16) * faixa_e
         plc = min_b + ((val_ma - 4) / 16) * faixa_b
-        col1, col2 = st.columns(2)
-        col1.metric(f"Resultado ({unidade})", f"{eng:.2f}")
-        col2.metric("Valor PLC", f"{int(plc)}")
+        exibir_resultado(f"{eng:.2f} {unidade}", "Resultado")
+        exibir_resultado(f"{int(plc)}", "Valor PLC")
 
 # --- TABELA E GRÁFICO ---
 st.markdown("---")
@@ -79,9 +80,4 @@ st.plotly_chart(fig, use_container_width=True)
 
 # --- RODAPÉ ---
 st.markdown("---")
-st.markdown(
-    f"<div style='text-align: center; color: gray;'>"
-    f"🚀 Ferramenta de Campo | <b>Gustavo Arruda</b>"
-    f"</div>", 
-    unsafe_allow_html=True
-)
+st.markdown("<div style='text-align: center; color: gray; font-size:18px;'>🚀 Ferramenta de Campo | <b>Gustavo Arruda</b></div>", unsafe_allow_html=True)
