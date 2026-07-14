@@ -14,13 +14,18 @@ opcoes_unidades = {
     "Vazão Volumétrica": ["L/min", "L/h", "m³/h", "m³/s", "GPM", "kg/h", "t/h", "Nm³/h", "SCFM"],
     "Vazão Mássica": ["kg/s", "kg/min", "kg/h", "t/h"],
     "Velocidade": ["m/s", "mm/s", "km/h"],
-    "Frequência/Rotação": ["Hz", "kHz", "RPM", "rps"]
+    "Frequência/Rotação": ["Hz", "kHz", "RPM", "rps"],
+    "Outros": []
 }
 
 # --- CONFIGURAÇÕES ---
 st.sidebar.header("Configurações")
 categoria = st.sidebar.selectbox("Escolha a Grandeza:", list(opcoes_unidades.keys()))
-unidade = st.sidebar.selectbox("Escolha a Unidade:", opcoes_unidades[categoria])
+
+if categoria == "Outros":
+    unidade = st.sidebar.text_input("Digite a Unidade:", value="unid")
+else:
+    unidade = st.sidebar.selectbox("Escolha a Unidade:", opcoes_unidades[categoria])
 
 min_b = st.sidebar.number_input("Valor PLC (4mA):", value=1638)
 max_b = st.sidebar.number_input("Valor PLC (20mA):", value=8191)
