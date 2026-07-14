@@ -6,11 +6,22 @@ st.set_page_config(page_title="Conversor Profissional", page_icon="⚙️")
 
 st.title("⚙️ Conversor de Instrumentação")
 
+# --- DICIONÁRIO DE UNIDADES ---
+opcoes_unidades = {
+    "Pressão": ["bar", "psi", "kPa", "MPa", "Pa", "kgf/cm²", "mmH₂O", "mmHg"],
+    "Temperatura": ["°C", "°F", "K"],
+    "Nível": ["%", "mm", "cm", "m", "in", "ft", "L", "m³"],
+    "Vazão Volumétrica": ["L/min", "L/h", "m³/h", "m³/s", "GPM", "kg/h", "t/h", "Nm³/h", "SCFM"],
+    "Vazão Mássica": ["kg/s", "kg/min", "kg/h", "t/h"],
+    "Velocidade": ["m/s", "mm/s", "km/h"],
+    "Frequência/Rotação": ["Hz", "kHz", "RPM", "rps"]
+}
+
 # --- CONFIGURAÇÕES ---
 st.sidebar.header("Configurações")
-unidade = st.sidebar.text_input("Unidade:", value="°C")
+categoria = st.sidebar.selectbox("Escolha a Grandeza:", list(opcoes_unidades.keys()))
+unidade = st.sidebar.selectbox("Escolha a Unidade:", opcoes_unidades[categoria])
 
-# Usamos f-strings nos labels para incluir a unidade dinamicamente
 min_b = st.sidebar.number_input("Valor PLC (4mA):", value=1638)
 max_b = st.sidebar.number_input("Valor PLC (20mA):", value=8191)
 min_e = st.sidebar.number_input(f"Engenharia Mínima ({unidade}):", value=0.0)
@@ -40,7 +51,7 @@ with tab2:
         col1.metric(f"Resultado ({unidade})", f"{eng:.2f}")
         col2.metric("Valor PLC", f"{int(plc)}")
 
-# --- TABELA E GRÁFICO MODERNO ---
+# --- TABELA E GRÁFICO ---
 st.markdown("---")
 st.subheader("Tabela de Referência")
 df = pd.DataFrame({
@@ -52,7 +63,6 @@ st.table(df)
 
 st.subheader("Gráfico de Linearidade")
 fig = px.line(df, x="Corrente (mA)", y=f"Engenharia ({unidade})", 
-              markers=True, template="plotly_dark",
-              title="Curva de Calibração")
+              markers=True, template="plotly_dark", title="Curva de Calibração")
 fig.update_traces(line_color='#00ccff', line_width=3)
 st.plotly_chart(fig, use_container_width=True)
