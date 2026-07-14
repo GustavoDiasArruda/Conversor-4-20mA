@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
 
 st.set_page_config(page_title="Conversor Profissional", page_icon="⚙️")
 
@@ -25,31 +25,32 @@ with tab1:
     if st.button("Calcular (PLC)"):
         ma = 4 + ((val_b - min_b) / faixa_b) * 16
         eng = min_e + ((ma - 4) / 16) * faixa_e
-        st.metric(f"Resultado em {unidade}", f"{eng:.2f} {unidade}")
-        st.metric("Corrente Resultante", f"{ma:.2f} mA")
+        col1, col2 = st.columns(2)
+        col1.metric(f"Resultado ({unidade})", f"{eng:.2f}")
+        col2.metric("Corrente (mA)", f"{ma:.2f}")
 
 with tab2:
     val_ma = st.number_input("Digite os mA:", min_value=4.0, max_value=20.0, value=12.0)
     if st.button("Calcular (mA)"):
         eng = min_e + ((val_ma - 4) / 16) * faixa_e
         plc = min_b + ((val_ma - 4) / 16) * faixa_b
-        st.metric(f"Resultado em {unidade}", f"{eng:.2f} {unidade}")
-        st.metric("Valor PLC Correspondente", f"{int(plc)}")
+        col1, col2 = st.columns(2)
+        col1.metric(f"Resultado ({unidade})", f"{eng:.2f}")
+        col2.metric("Valor PLC", f"{int(plc)}")
 
-# --- TABELA E GRÁFICO ---
+# --- TABELA E GRÁFICO MODERNO ---
 st.markdown("---")
 st.subheader("Tabela de Referência")
 df = pd.DataFrame({
-    "Corrente": [4, 8, 12, 16, 20],
-    f"Eng ({unidade})": [min_e, min_e+(faixa_e*0.25), min_e+(faixa_e*0.50), min_e+(faixa_e*0.75), max_e],
+    "Corrente (mA)": [4, 8, 12, 16, 20],
+    f"Engenharia ({unidade})": [min_e, min_e+(faixa_e*0.25), min_e+(faixa_e*0.50), min_e+(faixa_e*0.75), max_e],
     "Valor PLC": [min_b, min_b+(faixa_b*0.25), min_b+(faixa_b*0.50), min_b+(faixa_b*0.75), max_b]
 })
 st.table(df)
 
 st.subheader("Gráfico de Linearidade")
-fig, ax = plt.subplots()
-ax.plot(df["Corrente"], df[f"Eng ({unidade})"], marker='o', linestyle='-', color='b')
-ax.set_xlabel("Corrente (mA)")
-ax.set_ylabel(f"Engenharia ({unidade})")
-ax.grid(True)
-st.pyplot(fig)
+fig = px.line(df, x="Corrente (mA)", y=f"Engenharia ({unidade})", 
+              markers=True, template="plotly_dark",
+              title="Curva de Calibração")
+fig.update_traces(line_color='#00ccff', line_width=3)
+st.plotly_chart(fig, use_container_width=True)
