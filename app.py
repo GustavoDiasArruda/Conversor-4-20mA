@@ -1,52 +1,32 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="Conversor de Instrumentação", page_icon="⚙️")
+st.set_page_config(page_title="Conversor", page_icon="⚙️")
+st.title("⚙️ Conversor de Instrumentação")
 
-st.title("⚙️ Conversor de Instrumentaçã33o")
+# --- CONFIGURAÇÃO ---
+st.sidebar.header("Configurações")
+unidade = st.sidebar.text_input("Unidade:", value="°C")
+min_bruto = st.sidebar.number_input("Bruto 4mA:", value=1638)
+max_bruto = st.sidebar.number_input("Bruto 20mA:", value=8191)
+min_eng = st.sidebar.number_input("Engenharia Mínima:", value=0.0)
+max_eng = st.sidebar.number_input("Engenharia Máxima:", value=100.0)
 
-# --- PAINEL DE CONFIGURAÇÃO ---
-st.sidebar.header("Configurações do Instrumento")
-unidade = st.sidebar.text_input("Unidade (ex: °C, Bar, m³/h):", value="°C")
-min_val_bruto = st.sidebar.number_input("Valor Bruto para 4mA:", value=1638)
-max_val_bruto = st.sidebar.number_input("Valor Bruto para 20mA:", value=8191)
+# --- CÁLCULO ---
+faixa_b = max_bruto - min_bruto
+faixa_e = max_eng - min_eng
 
-st.sidebar.subheader("Escala de Engenharia")
-min_eng = st.sidebar.number_input("Valor mínimo (4mA):", value=0.0)
-max_eng = st.sidebar.number_input("Valor máximo (20mA):", value=100.0)
+tab1, tab2 = st.tabs(["Bruto ➡️ Eng", "mA ➡️ Eng"])
 
-faixa_bruta = max_val_bruto - min_val_bruto
-faixa_eng = max_eng - min_eng
+with tab1:
+    val = st.number_input("Valor Bruto:", value=5500)
+    if st.button("Calcular"):
+        ma = 4 + ((val - min_bruto) / faixa_b) * 16
+        res = min_eng + ((ma - 4) / 16) * faixa_e
+        st.success(f"Resultado: {res:.2f} {unidade}")
 
-# --- ABAS DE CONVERSÃO ---
-aba1, aba2 = st.tabs(["Bruto ➡️ Engenharia", "mA ➡️ Engenharia"])
-
-with aba1:
-    st.header("Conversão: Valor Bruto")
-    val_bruto = st.number_input("Digite o Valor Bruto:", value=5500)
-    if st.button("Calcular Valor em Engenharia"):
-        ma = 4 + ((val_bruto - min_val_bruto) / faixa_bruta) * 16
-        valor_eng = min_eng + ((ma - 4) / 16) * faixa_eng
-        st.metric(label=f"Valor em {unidade}", value=f"{valor_eng:.2f} {unidade}")
-
-with aba2:
-    st.header("Conversão: Corrente (mA)")
-    val_ma = st.number_input("Digite a Corrente (mA):", min_value=4.0, max_value=20.0, value=12.0)
-    if st.button("Calcular Valor em Engenharia"):
-        valor_eng = min_eng + ((val_ma - 4) / 16) * faixa_eng
-        st.metric(label=f"Valor em {unidade}", value=f"{valor_eng:.2f} {unidade}")
-
-# --- TABELA DE REFERÊNCIA ---
-st.markdown("---")
-st.subheader("Tabela de Referência")
-
-referencias = {
-    "4 mA": min_eng,
-    "8 mA": min_eng + (faixa_eng * 0.25),
-    "12 mA": min_eng + (faixa_eng * 0.50),
-    "16 mA": min_eng + (faixa_eng * 0.75),
-    "20 mA": max_eng
-}
-
-df = pd.DataFrame(list(referencias.items()), columns=["Corrente", f"Valor em {unidade}"])
-st.table(df)
+with tab2:
+    val_ma = st.number_input("Corrente (mA):", min_value=4.0, max_value=20.0, value=12.0)
+    if st.button("Calcular mA"):
+        res = min_eng + ((val_ma - 4) / 16) * faixa_e
+        st.success(f"Resultado: {res:.2f} {unidade}")
